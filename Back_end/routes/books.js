@@ -7,9 +7,11 @@ const multer = require('../middleware/multer-config');
 const booksCrtl = require('../controllers/books');
 
 router.post('/', auth, multer, booksCrtl.createBook);
+router.post('/:id/rating', auth, booksCrtl.rateBook);
 router.put('/:id', auth, multer, booksCrtl.modifyBook);
-router.delete('/:id', auth, booksCrtl.deleteBook);
 router.get('/:id', auth, booksCrtl.getOneBook);
 router.get('/', auth,booksCrtl.getAllBooks);
+router.get('/bestrating', booksCrtl.BestRating);
+router.delete('/:id', auth, booksCrtl.deleteBook);
 
 module.exports = router;
