@@ -5,13 +5,13 @@ const fs = require('fs');
 
 exports.createBook = (req, res, next) => {
 
-// Parsing de l'objet livre envoyé avec la requête et suppression des champs inutiles
+//Analyse et nettoyage de l'objet livre reçu dans la requête 
 
   const bookObject = JSON.parse(req.body.book);
   delete bookObject._id;
   delete bookObject._userId;
   
-// Création d'une nouvelle instance de livre avec les informations reçues et sauvegarde dans la base de données
+// Création d'un livre avec les info reçues et sauvegarde dans la BDD
 
   const book = new Book({
       ...bookObject,
@@ -19,7 +19,7 @@ exports.createBook = (req, res, next) => {
       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
   });
 
-// Enregistrement du livre dans la base de données
+// Enregistrement du livre dans la BDD
 
   book.save()
   .then(() => { res.status(201).json({message: 'Livre enregistré !😊'})})
@@ -30,14 +30,14 @@ exports.createBook = (req, res, next) => {
 
 exports.modifyBook = (req, res, next) => {
 
-// Mise à jour de l'objet livre avec une nouvelle image si elle est présente dans la requête
+//MAJ de l'objet livre avec une nouvelle image si elle est présente dans la requête
 
   const bookObject = req.file ? {
       ...JSON.parse(req.body.book),
       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
   } : { ...req.body };
 
-  delete bookObject._userId; // Suppression du champ _userId pour éviter la modification non autorisée
+  delete bookObject._userId; // Suppression du champ userid pour éviter la modification non autorisée
   Book.findOne({_id: req.params.id})
       .then((book) => {
           if (book.userId != req.auth.userId) {
@@ -60,12 +60,12 @@ exports.deleteBook = (req, res, next) => {
   Book.findOne({ _id: req.params.id})
       .then(book => {
           if (book.userId != req.auth.userId) {
-              res.status(401).json({message: 'Non-authorisé'}); // Vérification de l'autorisation
+              res.status(401).json({message: 'Non-authorisé'}); 
           } else {
-            // Suppression du fichier image du livre du serveur
+            // Sup image du livre du serveur
               const filename = book.imageUrl.split('/images/')[1];
               fs.unlink(`images/${filename}`, () => {
-                // Suppression du livre de la base de données
+                // Suppression du livre de la BDD
                   Book.deleteOne({_id: req.params.id})
                       .then(() => { res.status(200).json({message: 'Objet supprimé ! 👋'})})
                       .catch(error => res.status(401).json({ error }));
