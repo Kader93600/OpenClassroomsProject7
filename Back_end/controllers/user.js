@@ -6,7 +6,7 @@ const User = require('../models/User');
 // Middleware pour l'inscription des users
 
 exports.signup = (req, res, next) => {
-    // Hashage du MDP avec bcrypt avant de sauvegarder l'user dans la base de données
+    // Hashage du MDP avec bcrypt avant de sauvegarder l'user dans la BDD
     bcrypt
     .hash(req.body.password, 10)
     .then(hash => {
@@ -33,15 +33,15 @@ exports.login = (req, res, next) => {
                 return res.status(401).json({ message: 'Paire login/mot de passe incorrecte'});
             }
             
-            // Comparaison du MDP donnée avec le hash enregistré dans la base de données
+            // Comparaison du MDP donnée avec le hash enregistré dans la BDD
             bcrypt
             .compare(req.body.password, user.password)
             .then(valid => {
                 if (!valid) {
-                    // Si le MDP ne smash pas, on retourne une erreur.
+                    // Si le MDP pas valide => on retourne une erreur.
                     return res.status(401).json({ message: 'Paire login/mot de passe incorrecte' });
                 }
-                // Si tout est correct, on retourne l'ID de l'user et un token JWT
+                // Si c'est good => retourne l'ID de l'user et un token JWT
                 res.status(200).json({
                     userId: user._id,
                     token: jwt.sign(

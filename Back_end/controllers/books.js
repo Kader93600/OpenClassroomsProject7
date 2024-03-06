@@ -112,10 +112,8 @@ exports.rateBook = (req, res, next) => {
 
             // Ajout de la note au livre et mise à jour de la note moyenne
 
-			const ratingObject = { userId: req.auth.userId, grade: req.body.rating };
-			
+			const ratingObject = { userId: req.auth.userId, grade: req.body.rating };			
             book.ratings.push(ratingObject);
-
 			book.averageRating = calculateAverageRating(book.ratings);
 
 			book.save()
@@ -129,24 +127,28 @@ exports.rateBook = (req, res, next) => {
 
 exports.bestRating = (req, res, next) => {
 	Book.find()
-		.sort({ averageRating: -1 }) // Tri des livres par leur note moyenne, du plus élevé au plus bas
+		.sort({ averageRating: -1 }) // Tri des livres par leur note moyenne, du plus élevé au plus bas (-1 = Décendant)
+        .limit(3)
 		.then((books) => {
             // Sélection des trois livres les mieux notés
-			const bestRatedBooks = books.slice(0, 3);
-			res.status(200).json(bestRatedBooks);
+			res.status(200).json(books);
 		})
 		.catch((error) => res.status(400).json({ error }));
 };
 
+
+
 // Fonction pour calculer la note moyenne d'un livre
 
 function calculateAverageRating(ratings) {
-	let totalRating = 0;
+	
+    let totalRating = 0; // Initialiser la somme total des notes 
 
 	for (const rating of ratings) {
-		totalRating += rating.grade;
+		totalRating += rating.grade; // On ajoute la note à la totalité des notes
 	}
 
 	const averageRating = totalRating / ratings.length;
-	return Math.round(averageRating); // Arrondir la note moyenne
+	
+    return Math.round(averageRating); // Arrondir Note Moy
 }

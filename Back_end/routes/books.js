@@ -14,7 +14,7 @@ router.put('/:id', auth, multer, booksCrtl.modifyBook);
 router.get('/:id', auth, booksCrtl.getOneBook);
 router.get('/', auth,booksCrtl.getAllBooks);
 
-router.get('/bestrating', booksCrtl.BestRating); // Ajout de cette route
+router.get('/bestrating', booksCrtl.bestRating); // Ajout de cette route
 
 router.delete('/:id', auth, booksCrtl.deleteBook);
 
