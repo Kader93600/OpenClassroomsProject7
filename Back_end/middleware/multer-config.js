@@ -2,7 +2,6 @@ const multer = require('multer');
 
 // Définition des types MIME pour mapper les extensions de fichiers
 
-
 const MIME_TYPES = {
   'image/jpg': 'jpg',
   'image/jpeg': 'jpg',

@@ -16,7 +16,7 @@ exports.createBook = (req, res, next) => {
   const book = new Book({
       ...bookObject,
       userId: req.auth.userId,
-      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
   });
 
 // Enregistrement du livre dans la BDD
@@ -28,16 +28,16 @@ exports.createBook = (req, res, next) => {
 
 // Middleware pour modifier un livre existant
 
-exports.modifyBook = (req, res, next) => {
+exports.updateBook = (req, res, next) => {
 
 //MAJ de l'objet livre avec une nouvelle image si elle est présente dans la requête
 
   const bookObject = req.file ? {
       ...JSON.parse(req.body.book),
-      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-  } : { ...req.body };
+      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`} : { ...req.body };
 
   delete bookObject._userId; // Suppression du champ userid pour éviter la modification non autorisée
+  
   Book.findOne({_id: req.params.id})
       .then((book) => {
           if (book.userId != req.auth.userId) {
