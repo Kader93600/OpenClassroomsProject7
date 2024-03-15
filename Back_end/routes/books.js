@@ -11,8 +11,8 @@ router.post('/:id/rating', auth, booksController.rateBook); // Ajout de cette ro
 
 router.put('/:id', auth, multer, booksController.updateBook);
 
-router.get('/:id', auth, booksController.getOneBook);
-router.get('/', auth,booksController.getAllBooks);
+router.get('/:id', booksController.getOneBook);
+router.get('/',booksController.getAllBooks);
 router.get('/bestrating', booksController.bestRating); // Ajout de cette route
 
 router.delete('/:id', auth, booksController.deleteBook);
