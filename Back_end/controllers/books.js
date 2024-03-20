@@ -1,4 +1,5 @@
 const Book = require('../models/Book');
+const sharp = require('sharp');
 const fs = require('fs');
 
 // Middleware pour créer un nouveau livre
@@ -11,19 +12,27 @@ exports.createBook = (req, res, next) => {
   delete bookObject._id;
   delete bookObject._userId;
   
-// Création d'un livre avec les info reçues et sauvegarde dans la BDD
+	// Création d'un livre avec les info reçues et sauvegarde dans la BDD
 
-  const book = new Book({
-      ...bookObject,
-      userId: req.auth.userId,
-      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
-  });
+	sharp(buffer)
+		.webp({ quality: 20 })
+		.toFile(`images/${filename}`)
+		.then(() => {
+			const book = new Book({
+				...bookObject,
+				userId: req.auth.userId,
+				imageUrl: `${req.protocol}://${req.get('host')}/images/${filename}`,
+			});
 
-// Enregistrement du livre dans la BDD
+			// Enregistrement du livre dans la BDD
 
-  book.save()
-  .then(() => { res.status(201).json({message: 'Livre enregistré !😊'})})
-  .catch(error => { res.status(400).json( { error })})
+			book.save()
+				.then(() => {
+					res.status(201).json({ message: 'Livre enregistré !😊' });
+				})
+				.catch((error) => res.status(400).json({ error }));
+		})
+		.catch((error) => res.status(500).json({ error }));
 };
 
 // Middleware pour modifier un livre existant
