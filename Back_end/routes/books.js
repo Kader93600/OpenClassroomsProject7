@@ -6,14 +6,15 @@ const multer = require('../middleware/multer-config');
 
 const booksController = require('../controllers/books');
 
+router.get('/bestrating',booksController.bestRating);
+
 router.post('/', auth, multer, booksController.createBook);
-router.post('/:id/rating', auth, booksController.rateBook); // Ajout de cette route
+router.post('/:id/rating', auth, booksController.rateBook); 
 
 router.put('/:id', auth, multer, booksController.updateBook);
 
 router.get('/:id', booksController.getOneBook);
 router.get('/',booksController.getAllBooks);
-router.get('/bestrating', booksController.bestRating); // Ajout de cette route
 
 router.delete('/:id', auth, booksController.deleteBook);
 
