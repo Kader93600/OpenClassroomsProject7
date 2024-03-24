@@ -5,7 +5,7 @@ const fs = require('fs');
 
 exports.createBook = (req, res, next) => {
 
-//Analyse et nettoyage de l'objet livre reçu dans la requête 
+//Analyse contenu des données et nettoyage de l'objet livre reçu dans la requête 
 
   const bookObject = JSON.parse(req.body.book);
   delete bookObject._id;
@@ -98,7 +98,7 @@ exports.getAllBooks =(req, res, next) => {
 exports.rateBook = (req, res, next) => {
     // Vérification de la validité de la note
 	if (req.body.rating < 0 || req.body.rating > 5) {
-		res.status(400).json({ message: 'La note doit être comprise entre 0 et 5.😊' });
+		res.status(400).json({ message: 'La note doit être comprise entre 1 et 5.😊' });
 		return;
 	}
 
