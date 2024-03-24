@@ -5,26 +5,27 @@ const fs = require('fs');
 
 exports.createBook = (req, res, next) => {
 
-//Analyse contenu des données et nettoyage de l'objet livre reçu dans la requête 
+    //Analyse contenu des données et nettoyage de l'objet livre reçu dans la requête 
+    
+      const bookObject = JSON.parse(req.body.book);
+      delete bookObject._id;
+      delete bookObject._userId;
+      
+    // Création d'un livre avec les info reçues et sauvegarde dans la BDD
+    
+      const book = new Book({
+          ...bookObject,
+          userId: req.auth.userId,
+          imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+      });
+    
+    // Enregistrement du livre dans la BDD
+    
+      book.save()
+      .then(() => { res.status(201).json({message: 'Livre enregistré !😊'})})
+      .catch(error => { res.status(400).json( { error })})
+    };
 
-  const bookObject = JSON.parse(req.body.book);
-  delete bookObject._id;
-  delete bookObject._userId;
-  
-// Création d'un livre avec les info reçues et sauvegarde dans la BDD
-
-  const book = new Book({
-      ...bookObject,
-      userId: req.auth.userId,
-      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
-  });
-
-// Enregistrement du livre dans la BDD
-
-  book.save()
-  .then(() => { res.status(201).json({message: 'Livre enregistré !😊'})})
-  .catch(error => { res.status(400).json( { error })})
-};
 
 // Middleware pour modifier un livre existant
 

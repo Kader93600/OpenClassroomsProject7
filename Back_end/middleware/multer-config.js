@@ -1,23 +1,21 @@
 const multer = require('multer');
+const sharp = require('sharp');
+const storage = multer.memoryStorage();
 
-// Définition des types MIME pour mapper les extensions de fichiers
+const multerUpload = multer({ storage: storage }).single('image');
 
-const MIME_TYPES = {
-  'image/jpg': 'jpg',
-  'image/jpeg': 'jpg',
-  'image/png': 'png',
+// Convertir et sauvegarder l'image
+const convertAndSaveImage = (req, res, next) => {
+  if (!req.file) return next(); 
+  const filename = req.file.originalname.split(' ').join('_')+ Date.now() + '.webp'; 
+
+  sharp(req.file.buffer)
+    .webp({ quality: 80 }) 
+    .toFile(`images/${filename}`, (err) => {
+      if (err) return next(err);
+      req.file.filename = filename;
+      next();
+    });
 };
 
-const storage = multer.diskStorage({
-  //  Enregistrement des IMG dans le dossier 'images'
-  destination: (req, file, callback) => {
-    callback(null, 'images');
-  },
-  filename: (req, file, callback) => {
-    const name = file.originalname.split(' ').join('_');
-    const extension = MIME_TYPES[file.mimetype];
-    callback(null, name + Date.now() + '.' + extension);
-  }
-});
-
-module.exports = multer({storage: storage}).single('image');
+module.exports = { multerUpload, convertAndSaveImage };
